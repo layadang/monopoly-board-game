@@ -10,16 +10,16 @@ This project aims to model a two-player auction-based monopoly board game to fin
 For the sake of simplicity, we will NOT implement ability to:
 - Upgrade properties (i.e. build houses and hotels),
 - Chance/community chest cards,
-- Going to jail.
-- Auction off owned property when rent cannot be paid (so player automatically loses if they cannot pay rent)
+- Going to jail, and
+- Auction off owned property when rent cannot be paid (so player automatically loses if they cannot pay rent).
 
 ## Methodology
 ### Game Logic Implementation
-We will begin by building the logic for the Monopoly board game and players as Python objects. The board class will follow available data on the classic Board and keep track of property information (price, tax, neighborhood). The player class has the ability to roll the dice(s), keep track of owned property and wealth, and specify a player's auction strategy.
+We will begin by building the logic for the Monopoly board game and players as Python objects. The `Board` class will follow available data on the classic Board and keep track of property information (price, tax, neighborhood). The `Player` class has the ability to roll the dice(s), keep track of owned property and wealth, and specify a player's auction strategy.
 
-To recap the rules of Monopoly and key game elements:
+As a recap the rules of Monopoly and key game elements:
 1. **Board Layout**: 
-   - The board consists of 40 squares, including properties, utilities, railroads, and special spaces (like "Go" and "Free Parking").
+   - The board consists of 40 squares, including properties, utilities, railroads, and special spaces (like "Go," "Free Parking," and "Income Tax").
    - Properties are divided into neighborhoods or color groups.
 
 2. **Properties**: 
@@ -34,6 +34,7 @@ To recap the rules of Monopoly and key game elements:
    - Players take turns rolling two dice to move around the board.
    - The outcome of dice rolls determines movement and whether the player lands on an unowned property, owned property, or other squares.
 
+Other game rules can be found at [Hashbro's official rule book](https://www.hasbro.com/common/instruct/00009.pdf).
 
 ### Auction Theory
 A player's auction strategy will depend on:
@@ -47,7 +48,7 @@ We will find the best strategy for the four most common auction designs, describ
 - **Vickery auctions**: the highest price bidder wins, but only has to pay the second-highest price
 
 ### Data Collection
-These objects created above will track the players' actions and game state throughout each game. The inputs will include player decisions, the outcomes of dice rolls, and auction strategies.
+The Python objects created above will, by design, track the players' actions and game state throughout each game. The inputs will include player decisions, the outcomes of dice rolls, and auction strategies.
 
 ### Feature Extraction
 The key features to track for each turn of the game include:
