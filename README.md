@@ -34,7 +34,7 @@ As a recap the rules of Monopoly and key game elements:
    - Players take turns rolling two dice to move around the board.
    - The outcome of dice rolls determines movement and whether the player lands on an unowned property, owned property, or other squares.
 
-Other game rules can be found at [Hashbro's official rule book](https://www.hasbro.com/common/instruct/00009.pdf).
+Other game rules can be found at [Hasbro's official rule book](https://www.hasbro.com/common/instruct/00009.pdf).
 
 ### Auction Theory
 A player's auction strategy will depend on:
@@ -43,7 +43,7 @@ A player's auction strategy will depend on:
 
 We will find the best strategy for the four most common auction designs, described as:
 - **English auctions**: players continue to make higher bids until they are no longer willing to to pay higher than the last price
-- **Dutch auctions**: a high price is initally set and decreases until a player is willing to to pay the current price
+- **Dutch auctions**: a high price is initially set and decreases until a player is willing to to pay the current price
 - **Blind auctions**: players simultaneously bid a price without knowing the opponent's price, and the higher bid wins
 - **Vickery auctions**: the highest price bidder wins, but only has to pay the second-highest price
 
