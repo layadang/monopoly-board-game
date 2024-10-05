@@ -17,7 +17,7 @@ For the sake of simplicity, we will NOT implement ability to:
 ### Game Logic Implementation
 We will begin by building the logic for the Monopoly board game and players as Python objects. The `Board` class will follow available data on the classic Board and keep track of property information (price, tax, neighborhood). The `Player` class has the ability to roll the dice(s), keep track of owned property and wealth, and specify a player's auction strategy.
 
-As a recap the rules of Monopoly and key game elements:
+As a recap, these are the rules and key game elements of Monopoly :
 1. **Board Layout**: 
    - The board consists of 40 squares, including properties, utilities, railroads, and special spaces (like "Go," "Free Parking," and "Income Tax").
    - Properties are divided into neighborhoods or color groups.
@@ -40,10 +40,11 @@ Other game rules can be found at [Hasbro's official rule book](https://www.hasbr
 A player's auction strategy will depend on:
 - Expected value from the property (rent, how frequently that square gets landed on, what in the neighborhood is already owned)
 - Price of property in relation to current wealth 
+- Opponent's auction strategy
 
 We will find the best strategy for the four most common auction designs, described as:
-- **English auctions**: players continue to make higher bids until they are no longer willing to to pay higher than the last price
-- **Dutch auctions**: a high price is initially set and decreases until a player is willing to to pay the current price
+- **English auctions**: players continue to make higher bids until they are no longer willing to pay higher than the last price
+- **Dutch auctions**: a high price is initially set and decreases until a player is willing to pay the current price
 - **Blind auctions**: players simultaneously bid a price without knowing the opponent's price, and the higher bid wins
 - **Vickery auctions**: the highest price bidder wins, but only has to pay the second-highest price
 
@@ -52,8 +53,8 @@ The Python objects created above will, by design, track the players' actions and
 
 ### Feature Extraction
 The key features to track for each turn of the game include:
-- Dice roll (out of 12)
-- Player's wealth
+- Current auction design
+- Players' wealth
 - Number of properties owned
 - Rent paid
 - Auction results (winning bids and price)
@@ -61,6 +62,13 @@ The key features to track for each turn of the game include:
 - Other relevant data points, such as neighborhood ownership and frequency of landing on properties
 
 We will run these simulations *n* times until we have sufficient data for analysis.
+
+## Potential Data Inconsistencies 
+Some errors and edge cases that may occur with our data collection may be:
+- A player going bankrupt too early in the game before establishing any bidding strategy
+    - **Fix**: In the data cleaning stage, accept a valid  game only if each player gets over 20 turns (change this depending on how much sufficient data we have)
+- Random outcomes of dice rolls putting too much noise in the data, a.k.a. sometimes players are just "lucky"
+    - **Fix**: Run a sufficient number of games and plot dice roll outcomes to ensure it is the expected distribution (2d6 Gaussian distribution)
 
 ## Visualizations and Modeling
 
