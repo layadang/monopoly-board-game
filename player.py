@@ -7,5 +7,6 @@
 #   add_property() that adds property information to owned_properties array
 
 class Player:
-    def __init__(self):
-        return 0
+    def __init__(self, i):
+        # Player number as 1 or 2
+        self.i = i 
