@@ -31,20 +31,37 @@ class Player:
     def move(self):
         """
             Randomly rolls dice (1-12) and moves player position
+            
+            TODO: Add wealth effect of passing Go?
         """
         roll = np.random.randint(1, 13)
         self.position += roll
         if(self.position >= 40):
             self.position -= 40
             
+            # Add wealth effect of passing Go
+            self.wealth += 200
+            
+                        
     def pay_rent(self, rent):
         """
             Decrease rent from wealth
         """
         self.wealth -= rent
         
+        # Check if the player is bankrupt
+        self.bankrupt_check()
+        
     def add_property(self, property):
         """
             Add property to owned_properties
         """
         self.owned_properties.append(property)
+    
+    def bankrupt_check(self):
+        """
+            Check if player is bankrupt
+        """
+        if(self.wealth < 0):
+            self.bankruptcy = True
+        return self.bankruptcy

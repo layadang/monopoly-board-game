@@ -79,9 +79,11 @@ class Board:
         for i, row in board_squares.iterrows():
             # for income and luxury tax squares:
             action = -row['tax']
-            if (i==0):
-                 # manual adjustmet for +200 when passing Go
-                action = 200
+            
+            # Wealth logic moved to player.py
+            # if (i==0):
+            #      # manual adjustmet for +200 when passing Go
+            #     action = 200
                 
             to_add = Square(i, 
                             row['name'], 
