@@ -1,11 +1,5 @@
 # MONOPOLY PLAYER OBJECT
 
-# functions needed:
-#   init with wealth (int), owned_properties (array), position on board (index), bankruptcy (boolean)
-#   move() that randomly rolls dice (selects 1-12) and increases position on board
-#   pay_rent() that decreases rent from wealth
-#   buy_property() that adds property information to owned_properties array
-
 import random
 import math
 
@@ -59,33 +53,57 @@ class Player:
         self.position = self.position % 40 # wrap position around the board
 
         return self.position
-    
+
     def valutation_function(self, property):
         """ 
             Input: property (Square object)
                 [position, name, cost, rent, neighborhood]
                     ex. [1, "Mediterranean Avenue", 60, 2, "Brown"]
         """
+        # position, name, cost, rent, neighborhood = property
+
+        # position = property.position
+        # name = property.name
+        cost = property.cost
+        rent = property.rent
+        neighborhood = property.neighborhood
 
         ## m = NUMBER OF OTHER PROPERTY IN NEIGHBORHOOD OWNED
         ## r = PROPERTY RENT
         ## w_new = WEALTH AFTER BUYING PROPERTY --> if < 0, return 0
         ## v_other = OPPONENT'S VALUATION...?
 
-        # Risk-aversion only affects how I bid 
-        # common value as price not the market value
-        # need probability of people landing on the board
-        # halves the number of times people go around the board.... double valuation once you own two properties
-        # p winning is p my valuation is higher than yours 
+        # IF PLAYER CANNOT AFFORD PROPERTY
+        if cost > self.wealth:
+            return 0
+        
+        base_valuation = cost + rent * 5    # replace 5 with square landing frequency factor
 
-        # Start really straight-forward: here's the valuation... (first time second time)...
-        ### What is a squares worth based on what they own?
-        ### Ammending pre-existing code
+        same_neighborhood_properties = [p for p in self.owned_property if p[4] == neighborhood]
+        neighborhood_completion_factor = 1 + (len(same_neighborhood_properties) / property.get_neighborhood_size()) 
 
-        pass
+        # Apply risk adjustment
+        if self.risk == 1:  # Risk-averse: reduce valuation
+            valuation = base_valuation * neighborhood_completion_factor * 0.8
+        elif self.risk == -1:  # Risk-loving: increase valuation
+            valuation = base_valuation * neighborhood_completion_factor * 1.2
+        else:  # Risk-neutral: use base valuation
+            valuation = base_valuation * neighborhood_completion_factor
+
+        return valuation
     
     ## max_(b_i) = probability of winning auction * (f(n, m, rent, …) - b_i)
-    
+
+    def add_property(self, property):
+        """
+        **Only adds property, does not change wealth**
+            Input: property (Square object)
+                [position, name, cost, rent, neighborhood]
+                    ex. [1, "Mediterranean Avenue", 60, 2, "Brown"]
+        """
+        position, name, cost, rent, neighborhood = property
+        self.owned_property += property
+
     def utility_function(self, x):
         """
             Utility function is how much "happiness" someone gets from having x amount of money
@@ -116,10 +134,9 @@ class Player:
         self.wealth += x
         return self.wealth
 
-player_1 = Player(1, 0)
-player_2 = Player(2, 0)
+# player_1 = Player(1, 0)
+# player_2 = Player(2, 0)
 
-for i in range(20):
-    # testing 10 rolls
-    player_1.roll_dice()
-    player_2.roll_dice()
+# for i in range(20):
+#     player_1.roll_dice()
+#     player_2.roll_dice()

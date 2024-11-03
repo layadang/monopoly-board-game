@@ -7,6 +7,24 @@
 
 import pandas as pd
 
+# LOADING IN DATA...
+
+# squares data from: https://github.com/jm-contreras-zz/monopoly/blob/master/board.csv
+board_squares = pd.read_csv("data/board.csv")
+
+# drop irrelevant columns
+board_squares = board_squares.drop(['rent_house_1', 
+                                    'rent_house_2', 
+                                    'rent_house_3', 
+                                    'rent_house_4', 
+                                    'build_cost', 
+                                    'rent_hotel'], 
+                                    axis=1)
+
+# neighborhood sizes
+neighborhood_size_info = pd.read_csv("data/neighborhood_info.csv")
+neighborhood_dict = dict(zip(neighborhood_size_info.iloc[:, 0], neighborhood_size_info.iloc[:, 1]))
+
 class Square():
     """
         Square information
@@ -61,25 +79,13 @@ class Square():
         """
         self.landed += 1
 
-    def get_information(self):
-        return 0
-
+    def get_neighborhood_size(self):
+        """ 
+            return size of neighborhood for this square
+            (empty string if look-up failed)
+        """
+        return neighborhood_dict.get(self.neighborhood, "")
     
-# squares data from: https://github.com/jm-contreras-zz/monopoly/blob/master/board.csv
-board_squares = pd.read_csv("data/board.csv")
-
-# drop irrelevant columns
-board_squares = board_squares.drop(['rent_house_1', 
-                                    'rent_house_2', 
-                                    'rent_house_3', 
-                                    'rent_house_4', 
-                                    'build_cost', 
-                                    'rent_hotel'], 
-                                    axis=1)
-
-# neighborhood sizes
-neighborhood_size_info = pd.read_csv("data/neighborhood_info.csv")
-
 class Board:
     """
         Main game board with information of squares
@@ -109,10 +115,15 @@ class Board:
         return self.squares[i]
     
     def get_neighborhood_size(self, neighborhood):
+        """ 
+            input is name of neighborhood (str) 
+                ex. Brown, Railroad, Light Blue
+        """
         for _, row in neighborhood_size_info.iterrows():
             if row['name'] == neighborhood:
                 return row['monopoly_size']
-        # else it is not a neighborhood (input error?)
+            
+        # else it is not a neighborhood
         return 0
 
 board = Board()
