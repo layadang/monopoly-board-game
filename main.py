@@ -1,4 +1,5 @@
 from game import Game
+import random 
 
 # for i in range(30):
 #     game.next_turn(1)
@@ -10,7 +11,9 @@ from game import Game
 #     game.increase_round()
 #     print()
 
-def main(player_1_risk, player_2_risk, auction_type):
+def main(player_1_risk, player_2_risk, auction_type, seed):
+    random.seed(seed)
+
     game = Game([player_1_risk, player_2_risk], auction_type)
 
     while (game.end_game() is None):
@@ -29,6 +32,6 @@ def main(player_1_risk, player_2_risk, auction_type):
     print('======================')
     print(f"Total rounds: {game.round}")
     print("FINAL WEALTH:")
-    game.get_player_wealth()
+    game.get_final_stats()
 
-main(1, 1, "Random")
+main(-1, -1, "English", 101)

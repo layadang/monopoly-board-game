@@ -6,7 +6,7 @@ import random
 # player_1 = Player(1, 0)
 # player_2 = Player(2, 0)
 
-random.seed(100)
+# random.seed(101)
 
 class Game:
     def __init__(self, player_risks, bidding):
@@ -93,6 +93,7 @@ class Game:
                 # Current player pays the opponent player
                 owner.change_wealth(current_square.rent)
                 current_player.change_wealth(-current_square.rent)
+                current_player.rent_paid += current_square.rent
 
                 if current_player.wealth < 0:
                 # END GAME HERE
@@ -179,12 +180,10 @@ class Game:
         """
         price = property.cost
 
-        # Check if neither player can afford the property
         if current_player.wealth < price and opponent_player.wealth < price:
             print("Neither player can afford the property.")
             return 
 
-        # Randomly select a player for the chance to buy the property
         selected_player = random.choice([current_player, opponent_player])
         other_player = opponent_player if selected_player == current_player else current_player
 
@@ -200,12 +199,28 @@ class Game:
             other_player.change_wealth(-price)
             property.buy_property(other_player)
             print(f"Player {selected_player} couldn't afford it. Player {other_player} buys {property} for ${price}")
-        else:
-            # Neither player can afford the property
-            print("Neither player can afford the property.")
 
     def current_player_wealth(self, i):
         """
             Checking current player wealth of player i
         """
         return self.players[i].wealth
+    
+    def get_final_stats(self):
+        self.players[0].update_neighborhood_completeness()
+        self.players[1].update_neighborhood_completeness()
+
+        print(f"Player 1 ended with ${self.players[0].wealth}")
+        print(f"Player 1 paid a total rent of ${self.players[0].rent_paid}")
+        print(f"Player 1 had {len(self.players[0].owned_property)} properties")
+        print(f"Player 1 passed Go {self.players[0].pass_go} times")
+        print(f"Player 1 has {self.players[0].neighborhood_completeness} completed neighborhoods")
+
+        print()
+
+        print(f"Player 2 ended with ${self.players[1].wealth}")
+        print(f"Player 2 paid a total rent of ${self.players[1].rent_paid}")
+        print(f"Player 2 had {len(self.players[1].owned_property)} properties")
+        print(f"Player 2 passed Go {self.players[1].pass_go} times")
+        print(f"Player 2 has {self.players[1].neighborhood_completeness} completed neighborhoods")
+

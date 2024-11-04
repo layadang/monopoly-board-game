@@ -4,7 +4,7 @@ import random
 import math
 import numpy as np
 
-random.seed(100)
+# random.seed(101)
 
 class Player:
     def __init__(self, i, risk):
@@ -25,7 +25,7 @@ class Player:
 
         # Other metrics to keep track of:
         self.rent_paid = 0                      # total rent paid
-        self.neighborhood_completeness = 0.0    # number of completed neighborhood (1=complete, .x=percent completed)
+        self.neighborhood_completeness = 0.0    # number of completed neighborhood
         self.pass_go = 0                        # how many laps around the board
 
     def __str__(self):
@@ -150,6 +150,27 @@ class Player:
     def change_wealth(self, x):
         self.wealth += x
         return self.wealth
+    
+    def update_neighborhood_completeness(self):
+        """
+            Calculate number of completed neighborhoods
+        """
+        # dictionary to store count of properties owned per neighborhood
+        neighborhood_counts = {}
+        
+        for property in self.owned_property:
+            neighborhood = property.neighborhood
+
+            if neighborhood not in neighborhood_counts:
+                neighborhood_counts[neighborhood] = 0
+
+            neighborhood_counts[neighborhood] += 1
+
+            if (neighborhood_counts[neighborhood] == property.get_neighborhood_size()):
+                self.neighborhood_completeness += 1
+
+        return self.neighborhood_completeness
+
 
 # player_1 = Player(1, 0)
 # player_2 = Player(2, 0)
