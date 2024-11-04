@@ -6,6 +6,8 @@ import numpy as np
 
 # random.seed(101)
 
+import numpy as np
+
 class Player:
     def __init__(self, i, risk):
         # Player number as 1 or 2 (string)
