@@ -2,6 +2,7 @@
 
 import random
 import math
+import numpy as np
 
 random.seed(100)
 
@@ -35,7 +36,7 @@ class Player:
             Players get +$200 each time they pass Go
             Updates the "pass_go" counter metric
         """
-        print(f"Player {self.i} Passed Go!!")
+        print(f"Player {self.i} Passed Go!")
         self.wealth += 200
         self.pass_go += 1
 
@@ -47,7 +48,7 @@ class Player:
         """
         dice_outcome = random.randint(1, 6) + random.randint(1, 6)
         
-        print(f'player {self.i} is at {self.position} and rolled {dice_outcome}')
+        print(f'Player {self.i} is at {self.position} and rolled {dice_outcome}')
 
         self.position += dice_outcome
         if (self.position > 40):
@@ -81,20 +82,15 @@ class Player:
             return 0
         
         base_valuation = cost + rent                        # multiply with square landing frequency factor when we find it
-        wealth_factor = 1 + (self.wealth / 1_500)  # factor in current wealth
+        wealth_factor = 1 + np.log(self.wealth / 1_500+1)           # factor in current wealth
 
         same_neighborhood_properties = [p for p in self.owned_property if p.neighborhood == neighborhood]
-
-        print(property)
-        print(property.get_neighborhood_size())
-        
-        neighborhood_completion_factor = 1 + (len(same_neighborhood_properties) / property.get_neighborhood_size()) 
-
+        neighborhood_completion_factor = (1 + len(same_neighborhood_properties) / property.get_neighborhood_size())
         valuation = base_valuation * neighborhood_completion_factor * wealth_factor
 
         # Apply risk adjustment
         if self.risk == 1:  # Risk-averse: reduce valuation
-            valuation *= 0.8
+            valuation *= 0.81
         elif self.risk == -1:  # Risk-loving: increase valuation
             valuation *= 1.2
         
@@ -120,7 +116,10 @@ class Player:
                 [position, name, cost, rent, neighborhood]
                     ex. [1, "Mediterranean Avenue", 60, 2, "Brown"]
         """
-        self.owned_property.append(property)
+        if property not in self.owned_property:
+            self.owned_property.append(property)
+        else:
+            print(f"Player {self.i} already owns {property}. Skipping addition.")
 
     def utility_function(self, x):
         """

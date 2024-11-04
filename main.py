@@ -1,14 +1,34 @@
 from game import Game
 
-game = Game([0, 1], "English")
+# for i in range(30):
+#     game.next_turn(1)
+#     print('========')
+#     game.next_turn(0)
+#     print('========')
+#     game.get_player_wealth()
+#     print('========')
+#     game.increase_round()
+#     print()
 
-for i in range(10): 
-    game.next_turn(1)
-    print('========')
-    game.next_turn(0)
-    print('========')
-    game.increase_round()
+def main(player_1_risk, player_2_risk, auction_type):
+    game = Game([player_1_risk, player_2_risk], auction_type)
 
-print(f"Total rounds: {game.round}")
-print(f"Player 1 final wealth: {game.current_player_wealth(0)}")
-print(f"Player 2 final wealth: {game.current_player_wealth(1)}")
+    while (game.end_game() is None):
+        print('======================')
+        if (not game.next_turn(1)):
+            break
+        print('======================')
+        if (not game.next_turn(0)):
+            break
+        print('======================')
+        game.get_player_wealth()
+        print('======================')
+        game.increase_round()
+        print()
+    
+    print('======================')
+    print(f"Total rounds: {game.round}")
+    print("FINAL WEALTH:")
+    game.get_player_wealth()
+
+main(1, 1, "Random")

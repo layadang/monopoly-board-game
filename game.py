@@ -1,9 +1,12 @@
 from player import Player
 from board import Square, Board
+import random
 
-# Defining two risk-neutral players
-player_1 = Player(1, 0)
-player_2 = Player(2, 0)
+# # Defining two risk-neutral players
+# player_1 = Player(1, 0)
+# player_2 = Player(2, 0)
+
+random.seed(100)
 
 class Game:
     def __init__(self, player_risks, bidding):
@@ -20,12 +23,48 @@ class Game:
         self.board = Board()    # board object
         self.bidding = bidding  # auction design
 
-        player_1 = Player(1, player_risks[0])
-        player_2 = Player(2, player_risks[1])
-        self.players = [player_1, player_2]      # array of Player objects (len=2)
+        self.players = [Player(1, player_risks[0]), Player(2, player_risks[1])]  # array of Player objects (len=2)
+      # array of Player objects (len=2)
 
     def increase_round(self):
         self.round += 1
+
+    def get_player_wealth(self):
+        print(f"Player 1 has ${self.players[0].wealth}")
+        print(f"Player 2 has ${self.players[1].wealth}")
+
+    def end_game(self):
+        """ 
+        Determines if the game has ended.
+        Returns:
+            - None if the game has not ended.
+            - Player who lost (bankrupt or with less wealth).
+            - "TIE" if all properties are bought and both players have equal wealth.
+        """
+        # Check for bankruptcy
+        if self.players[0].wealth < 0:
+            print(f"Player 1 is bankrupt!")
+            return self.players[0]
+        elif self.players[1].wealth < 0:
+            print(f"Player 2 is bankrupt!")
+            return self.players[1]
+
+        # Check if all properties are bought
+        total_properties_owned = len(self.players[0].owned_property) + len(self.players[1].owned_property)
+        if total_properties_owned == 28:
+            if self.players[0].wealth > self.players[1].wealth:
+                print("All properties bought. Player 2 loses with less wealth.")
+                return self.players[1]
+            elif self.players[1].wealth > self.players[0].wealth:
+                print("All properties bought. Player 1 loses with less wealth.")
+                return self.players[0]
+            else:
+                print("All properties bought and players are tied.")
+                return "TIE"
+
+        # Game continues
+        return None
+
 
     def next_turn(self, player):
         current_player = self.players[player]
@@ -33,13 +72,39 @@ class Game:
 
         new_position = current_player.roll_dice()
         current_square = self.board.get_property_at(new_position)
+        current_square.is_landed()
 
+        # POTENTIAL BUY
         if current_square.is_buyable():
-            print(current_square)
             if self.bidding == "English":
                 num_rounds = self.english_auction(current_player, opponent_player, current_square)
-                print(f"Total number of rounds is: {num_rounds}")
-        return
+                print(f"Total auction rounds: {num_rounds}")
+                # print(f"Square is now owned: {current_square.is_owned()}")
+            if self.bidding == "Random":
+                self.random_auction(current_player, opponent_player, current_square)
+
+        # PAY RENT?
+        elif (current_square.is_owned()):
+            print(f"Player {current_player} landed on {current_square}, owned by Player {current_square.ownedBy}")
+            owner = current_square.ownedBy
+            if owner == current_player:
+                return True
+            else:
+                # Current player pays the opponent player
+                owner.change_wealth(current_square.rent)
+                current_player.change_wealth(-current_square.rent)
+
+                if current_player.wealth < 0:
+                # END GAME HERE
+                    self.end_game()
+                    return False
+                
+        # TAX SQUARES
+        elif (current_square.action  != 0):
+            current_player.change_wealth(current_square.action)
+            print(f"Player {current_player} got taxed ${current_square.action}")
+            
+        return True
 
     def english_auction(self, current_player, opponent_player, property):
         """
@@ -48,24 +113,27 @@ class Game:
         auction_rounds = 0
         # Player initial valuation:
         player_valuation = current_player.valutation_function(property)
-        print(f"player valuation of {property} is {player_valuation}")
         opponent_valuation = opponent_player.valutation_function(property)
-        print(f"opponent valuation of {property} is {opponent_valuation}")
+        print(f"Player {current_player} valuation of {property} is {player_valuation}")
+        print(f"Player {opponent_player} valuation of {property} is {opponent_valuation}")
 
         # Case where both players cannot afford the property
         if (player_valuation == 0) and (opponent_valuation == 0):
             return auction_rounds
-        
+
         # Case where player does not value property at all, so opponent pays their valuation for it
         if (player_valuation == 0 and opponent_valuation != 0):
             opponent_player.add_property(property)
             opponent_player.change_wealth(-opponent_valuation)
+            property.buy_property(opponent_player)
             print(f"Player {opponent_player} wins the auction for {property} at ${opponent_valuation}")
             return auction_rounds
+        
         # Vice versa of case above
         elif (opponent_valuation == 0 and player_valuation != 0):
             current_player.add_property(property)
             current_player.change_wealth(-player_valuation)
+            property.buy_property(current_player)
             print(f"Player {current_player} wins the auction for {property} at ${player_valuation}")
             return auction_rounds
 
@@ -88,16 +156,54 @@ class Game:
                 # Opponent wins, pays final bid price
                 opponent_player.add_property(property)
                 opponent_player.change_wealth(-price)
+                property.buy_property(opponent_player)
                 print(f"Player {opponent_player} wins the auction for {property} at ${price}")
-                break
+                return auction_rounds
+
             elif current_decision and not opponent_decision:
                 # Current player wins, pays final bid price
                 current_player.add_property(property)
                 current_player.change_wealth(-price)
+                property.buy_property(current_player)
                 print(f"Player {current_player} wins the auction for {property} at ${price}")
-                break
+                return auction_rounds
+
+        print("Neither players bought the property.")
+
         return auction_rounds
             
+    def random_auction(self, current_player, opponent_player, property):
+        """
+            Function to randomly select a player to buy the property at the property's set cost.
+            If the selected player cannot afford it, the property is offered to the other player.
+        """
+        price = property.cost
+
+        # Check if neither player can afford the property
+        if current_player.wealth < price and opponent_player.wealth < price:
+            print("Neither player can afford the property.")
+            return 
+
+        # Randomly select a player for the chance to buy the property
+        selected_player = random.choice([current_player, opponent_player])
+        other_player = opponent_player if selected_player == current_player else current_player
+
+        # Check if the selected player can afford the property
+        if selected_player.wealth >= price:
+            selected_player.add_property(property)
+            selected_player.change_wealth(-price)
+            property.buy_property(selected_player)
+            print(f"Player {selected_player} wins the random auction and buys {property} for ${price}")
+        elif other_player.wealth >= price:
+            # If the selected player can't afford it, give it to the other player
+            other_player.add_property(property)
+            other_player.change_wealth(-price)
+            property.buy_property(other_player)
+            print(f"Player {selected_player} couldn't afford it. Player {other_player} buys {property} for ${price}")
+        else:
+            # Neither player can afford the property
+            print("Neither player can afford the property.")
+
     def current_player_wealth(self, i):
         """
             Checking current player wealth of player i

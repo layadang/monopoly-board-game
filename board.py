@@ -64,11 +64,9 @@ class Square():
     
     def buy_property(self, player):
         """
-            Assign property to player (1 or 2)
-            Returns cost
+            Assign property to Player object
         """
         self.ownedBy = player
-        return self
     
     def is_owned(self):
         return (self.ownedBy is not None)
@@ -79,7 +77,7 @@ class Square():
         else:
             return (self.rent != 0)
 
-    def landed(self):
+    def is_landed(self):
         """
             Keep track of how often square was landed on
         """
