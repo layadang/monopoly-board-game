@@ -26,6 +26,9 @@ class Player:
         self.rent_paid = 0                      # total rent paid
         self.neighborhood_completeness = 0.0    # number of completed neighborhood (1=complete, .x=percent completed)
         self.pass_go = 0                        # how many laps around the board
+
+    def __str__(self):
+        return str(self.i)
     
     def passed_go(self):
         """
@@ -77,20 +80,36 @@ class Player:
         if cost > self.wealth:
             return 0
         
-        base_valuation = cost + rent * 5    # replace 5 with square landing frequency factor
+        base_valuation = cost + rent                        # multiply with square landing frequency factor when we find it
+        wealth_factor = 1 + (self.wealth / 1_500)  # factor in current wealth
 
-        same_neighborhood_properties = [p for p in self.owned_property if p[4] == neighborhood]
+        same_neighborhood_properties = [p for p in self.owned_property if p.neighborhood == neighborhood]
+
+        print(property)
+        print(property.get_neighborhood_size())
+        
         neighborhood_completion_factor = 1 + (len(same_neighborhood_properties) / property.get_neighborhood_size()) 
+
+        valuation = base_valuation * neighborhood_completion_factor * wealth_factor
 
         # Apply risk adjustment
         if self.risk == 1:  # Risk-averse: reduce valuation
-            valuation = base_valuation * neighborhood_completion_factor * 0.8
+            valuation *= 0.8
         elif self.risk == -1:  # Risk-loving: increase valuation
-            valuation = base_valuation * neighborhood_completion_factor * 1.2
-        else:  # Risk-neutral: use base valuation
-            valuation = base_valuation * neighborhood_completion_factor
+            valuation *= 1.2
+        
+        if valuation >= self.wealth: # property worth entire wealth
+            return self.wealth
+
+        # Risk-neutral: use base valuation (do nothing)
 
         return valuation
+    
+    def decide_buy(self, valuation):
+        """ 
+            Player will decide to buy if buying property makes player 50% more happy
+        """
+        return self.utility_function(self.wealth) < 1.5 * self.utility_function(self.wealth - valuation)
     
     ## max_(b_i) = probability of winning auction * (f(n, m, rent, …) - b_i)
 
@@ -101,8 +120,7 @@ class Player:
                 [position, name, cost, rent, neighborhood]
                     ex. [1, "Mediterranean Avenue", 60, 2, "Brown"]
         """
-        position, name, cost, rent, neighborhood = property
-        self.owned_property += property
+        self.owned_property.append(property)
 
     def utility_function(self, x):
         """

@@ -73,6 +73,12 @@ class Square():
     def is_owned(self):
         return (self.ownedBy is not None)
     
+    def is_buyable(self):
+        if self.is_owned():
+            return False
+        else:
+            return (self.rent != 0)
+
     def landed(self):
         """
             Keep track of how often square was landed on
@@ -85,6 +91,7 @@ class Square():
             (empty string if look-up failed)
         """
         return neighborhood_dict.get(self.neighborhood, "")
+
     
 class Board:
     """
@@ -127,3 +134,5 @@ class Board:
         return 0
 
 board = Board()
+# chance_square = board.get_property_at(36)
+# print(chance_square.is_buyable())
