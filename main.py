@@ -1,16 +1,6 @@
-from game import Game
-import random
 import matplotlib.pyplot as plt
-
-# for i in range(30):
-#     game.next_turn(1)
-#     print('========')
-#     game.next_turn(0)
-#     print('========')
-#     game.get_player_wealth()
-#     print('========')
-#     game.increase_round()
-#     print()
+import random
+from game import Game
 
 """
 TODO: Add graphs for: english and random auction types to ppt
@@ -22,12 +12,28 @@ TRACKING FUNCTIONS
 
 def track_player_wealth(game, wealth_history):
     """
-    Appends the current wealth of both players to the wealth_history array.
-    TODO: This function is kind of useless, change it so it tracks WHEN the player passes go
+        Appends the current wealth of both players to the wealth_history array.
     """
     player_1_wealth = game.players[0].wealth
     player_2_wealth = game.players[1].wealth
     wealth_history.append((player_1_wealth, player_2_wealth))
+
+def plot_live_wealth(wealth_history, player_1_risk, player_2_risk, auction_type, seed):
+    """
+    Plots the live wealth history of both players.
+    """
+    rounds = list(range(len(wealth_history)))
+    player_1_wealth = [wealth[0] for wealth in wealth_history]
+    player_2_wealth = [wealth[1] for wealth in wealth_history]
+
+    plt.clf()  # clear the previous plot
+    plt.plot(rounds, player_1_wealth, label='Player 1 Wealth')
+    plt.plot(rounds, player_2_wealth, label='Player 2 Wealth')
+    plt.xlabel('Round')
+    plt.ylabel('Wealth')
+    plt.title(f'Player Wealth for {auction_type} Auction \nRisks={[player_1_risk, player_2_risk]} Seed={seed}')
+    plt.legend()
+    plt.pause(0.05)
     
 def track_player_rent_paid(game, rent_history_p1, rent_history_p2):
     """
@@ -79,21 +85,20 @@ def plot_rent_history(rent_history_p1, rent_history_p2, filename):
 
 def plot_wealth_history(wealth_history, filename):
     """
-    Plots the wealth history of both players and saves it to a file.
+    Plots the live wealth history of both players.
     """
     rounds = list(range(len(wealth_history)))
     player_1_wealth = [wealth[0] for wealth in wealth_history]
     player_2_wealth = [wealth[1] for wealth in wealth_history]
 
-    plt.figure()
+    plt.clf()  # clear the previous plot
     plt.plot(rounds, player_1_wealth, label='Player 1 Wealth')
     plt.plot(rounds, player_2_wealth, label='Player 2 Wealth')
     plt.xlabel('Round')
     plt.ylabel('Wealth')
-    plt.title('Wealth History')
+    plt.title(f'Player Wealth for {auction_type} Auction \nRisks={[player_1_risk, player_2_risk]} Seed={seed}')
     plt.legend()
-    plt.savefig(filename)
-    plt.close()
+    plt.pause(0.05)
 
 def plot_properties_owned(properties_owned_p1, properties_owned_p2, filename):
     """
@@ -127,87 +132,38 @@ def plot_squares_landed(squares_landed, filename):
 
 def main(player_1_risk, player_2_risk, auction_type, seed):
     wealth_history = []
-    pass_go_counts_p1 = 0
-    pass_go_counts_p2 = 0
 
-    rent_history_p1 = []
-    rent_history_p2 = []
-    
-    properties_owned_p1 = []
-    properties_owned_p2 = []
-    
-    
     random.seed(seed)
-
     game = Game([player_1_risk, player_2_risk], auction_type)
+    
+    plt.ion()  
+    fig = plt.figure()  
 
     while (game.end_game() is None):
-        print('======================')
-        if (not game.next_turn(1)):
+        if not game.next_turn(1):
             break
-        print('======================')
-        if (not game.next_turn(0)):
+        if not game.next_turn(0):
             break
-        print('======================')
-        game.get_player_wealth()
-        print('======================')
         game.increase_round()
-        print()
         
-        
-        """
-        Calling Tracking Functions
-        """
-        # Append player wealth to wealth history
         track_player_wealth(game, wealth_history)
         
-        # Append player rent paid to rent history
-        track_player_rent_paid(game, rent_history_p1, rent_history_p2)
-        
-        # Append player properties owned to properties owned history
-        track_properties_owned(game, properties_owned_p1, properties_owned_p2)
-        
-    
+        plot_live_wealth(wealth_history, player_1_risk, player_2_risk, auction_type, seed)
+
+    loser=game.end_game()
     print('======================')
+    print("FINAL STATS:")
     print(f"Total rounds: {game.round}")
-    print("FINAL WEALTH:")
-    game.get_final_stats()
-    
-    """
-    Calling plotting functions
-    """
-    rent_history_output = ''
-    wealth_history_output = ''
-    properties_owned_output = ''
-    squares_landed_output = ''
-    
-    if(auction_type == "English"):
-        rent_history_output = 'plots/rent_history_english.png'
-        wealth_history_output = 'plots/wealth_history_english.png'
-        properties_owned_output = 'plots/properties_owned_english.png'
-        squares_landed_output = 'plots/squares_landed_english.png'
-    else:
-        rent_history_output = 'plots/rent_history_random.png'
-        wealth_history_output = 'plots/wealth_history_random.png'
-        properties_owned_output = 'plots/properties_owned_random.png'
-        squares_landed_output = 'plots/squares_landed_random.png'
-        
-    # Plot rent paid history
-    plot_rent_history(rent_history_p1, rent_history_p2, rent_history_output)
-    
-    # Plot the wealth history of both players and save it to a file
-    plot_wealth_history(wealth_history, wealth_history_output)
-    
-    # Plot the properties owned history of both players and save it to a file
-    plot_properties_owned(properties_owned_p1, properties_owned_p2, properties_owned_output)
-    
-    squares_landed = track_squares_landed(game.board)
-    plot_squares_landed(squares_landed, squares_landed_output)
+    game.get_final_stats(auction_type, seed, loser)
 
-    
-    
-    # Plot the pass Go history of both players and save it to a file
-    #plot_pass_go_history(game, 'plots/pass_go_history.png')
+    plt.ioff()  
+    plt.show()
+    # plt.pause(2)  
+    # plt.close(fig)
 
+## CHANGE THIS FOR DATA COLLECTION!!
+# for i in range(10):
+#     seed = 100 + i
+#     main(0, 1, "English", seed)
 
-main(-1, -1, "Random", 420)
+main(0, 0, "Random", 420)
