@@ -14,14 +14,6 @@ import matplotlib.pyplot as plt
 
 """
 TODO: Add graphs for: english and random auction types to ppt
-
-TODO: wealth over time graph
-TODO: rent paid over time graph
-TODO: Amount of properties owned over time
-
-
-TODO: Track what squares are landed on the most -> square object -> self.landed
-
 """
 
 """

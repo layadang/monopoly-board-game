@@ -64,8 +64,9 @@ class Game:
                 return self.players[0]
             else:
                 print("All properties bought and players are tied.")
-                # TODO: Implement tie-breaker as random number between 1 and 2
-                return "TIE"
+                tie_breaker = random.randint(1, 2)
+                print(f"Tie breaker result: Player {tie_breaker} wins.")
+                return self.players[tie_breaker - 1]
 
         # Game continues
         return None
