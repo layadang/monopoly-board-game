@@ -151,6 +151,7 @@ class Player:
         
     def change_wealth(self, x):
         self.wealth += x
+        self.wealth = self.wealth.round(2)
         return self.wealth
     
     def update_neighborhood_completeness(self):

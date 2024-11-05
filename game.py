@@ -49,6 +49,10 @@ class Game:
             print(f"Player 2 is bankrupt!")
             return self.players[1]
 
+        """
+        TODO: Winning strategy could be based on per-round wealth trend
+        """
+
         # Check if all properties are bought
         total_properties_owned = len(self.players[0].owned_property) + len(self.players[1].owned_property)
         if total_properties_owned == 28:
@@ -60,6 +64,7 @@ class Game:
                 return self.players[0]
             else:
                 print("All properties bought and players are tied.")
+                # TODO: Implement tie-breaker as random number between 1 and 2
                 return "TIE"
 
         # Game continues
