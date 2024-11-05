@@ -84,3 +84,26 @@ After collecting the data, we will apply machine learning models to identify pat
 
 ## Testing
 We will validate the effectiveness of our model by testing it on unseen Monopoly runs. Metrics for success will include winning percentage, average wealth by the end of the game, and the impact of each factor (e.g., property ownership, rent payments, and auction bids) on the game outcome.
+
+## Project Update:
+Originally we thought that player landings (what square the player lands on the board) would be evenly distributed between the total number of tiles on the board. The simulations showed otherwise. Square 25 and 31 were the most landed on squares. 
+![alt text](./plots/squares_landed_random.png)
+
+English auctions, which are the most common auction type, were also the more successful auction type when running simulations. The wealth history for both players increased gradually, and the simulation went on for over 500 rounds. We also saw that there is a clear distinction between the winner and loser in the game by seeing the wealth history and the amount of property owned by both players.
+![alt text](./plots/wealth_history_english.png)
+![alt text](./plots/properties_owned_english.png)
+
+The auction alternative that we also have implemented is a random auction, where when a player lands on a property, a random number generator selects which player can buy the property. If the player cannot afford the property, the property goes to the other player.
+
+During the simulations, we could clearly see that the data is more chaotic in terms of wealth history. The simulation went for only ~40 rounds (as opposed to the 500+ in englih auctions) and because of the low number of rounds, the players did not have enough time to recover from spending too much money on properties.
+
+In the english auction, the game ended because every property was bought by the players, while in the random auction, the game ended because one of the players went bankrupt.
+
+![alt text](./plots/wealth_history_random.png)
+![alt text](./plots/properties_owned_random.png)
+
+## Next Steps:
+- Explore results of multiple runs with different player combinations.
+- Implement who-goes-first as a feature.
+- Apple machine learning models on this feature to see if we accurately predict future game results.
+- Build other auction types if time permits.
