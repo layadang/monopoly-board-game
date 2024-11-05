@@ -99,9 +99,11 @@ We will validate the effectiveness of our model by testing it on unseen Monopoly
 
 ## Project Update:
 Originally we thought that player landings (what square the player lands on the board) would be evenly distributed between the total number of tiles on the board. The simulations showed otherwise. Square 25 and 31 were the most landed on squares. 
+
 ![alt text](./plots/squares_landed_random.png)
 
 English auctions, which are the most common auction type, were also the more successful auction type when running simulations. The wealth history for both players increased gradually, and the simulation went on for over 500 rounds. We also saw that there is a clear distinction between the winner and loser in the game by seeing the wealth history and the amount of property owned by both players.
+
 ![alt text](./plots/wealth_history_english.png)
 ![alt text](./plots/properties_owned_english.png)
 
