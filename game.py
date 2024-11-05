@@ -1,6 +1,7 @@
 from player import Player
 from board import Square, Board
 import random
+import csv
 
 # # Defining two risk-neutral players
 # player_1 = Player(1, 0)
@@ -212,7 +213,7 @@ class Game:
         """
         return self.players[i].wealth
     
-    def get_final_stats(self):
+    def get_final_stats(self, file_note, seed, loser):
         self.players[0].update_neighborhood_completeness()
         self.players[1].update_neighborhood_completeness()
 
@@ -230,3 +231,39 @@ class Game:
         print(f"Player 2 passed Go {self.players[1].pass_go} times")
         print(f"Player 2 has {self.players[1].neighborhood_completeness} completed neighborhoods")
 
+        player_stats = [
+        {
+            "seed": seed, 
+            "player": "Player 1",
+            "num_rounds": self.round,
+            "risk": self.players[0].risk,
+            "wealth": self.players[0].wealth,
+            "total_rent_paid": self.players[0].rent_paid,
+            "properties_owned": len(self.players[0].owned_property),
+            "passed_go_count": self.players[0].pass_go,
+            "neighborhood_completeness": self.players[0].neighborhood_completeness,
+            "loser":loser
+        },
+        {
+            "seed": seed,
+            "player": "Player 2",
+            "num_rounds": self.round,
+            "risk": self.players[1].risk,
+            "wealth": self.players[1].wealth,
+            "total_rent_paid": self.players[1].rent_paid,
+            "properties_owned": len(self.players[1].owned_property),
+            "passed_go_count": self.players[1].pass_go,
+            "neighborhood_completeness": self.players[1].neighborhood_completeness,
+            "loser":loser
+        }
+    ]
+    
+        # Append stats to CSV file
+        filename = f"results/game_stats_{file_note.lower()}.csv"
+        with open(filename, mode="a", newline="") as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=player_stats[0].keys())
+            if csvfile.tell() == 0:
+                writer.writeheader()
+            
+            for stats in player_stats:
+                writer.writerow(stats)
