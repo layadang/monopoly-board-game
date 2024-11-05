@@ -55,6 +55,16 @@ def track_properties_owned(game, properties_owned_p1, properties_owned_p2):
     properties_owned_p1.append(player_1_properties)
     properties_owned_p2.append(player_2_properties)
     
+def track_squares_landed(board):
+    """
+    Iterates through all squares on the board and stores the number of times a player has landed on each square in an array.
+    """
+    squares_landed = []
+    for square in board.squares:
+        squares_landed.append(square.landed)
+    return squares_landed
+
+    
 """
     PLOTTING FUNCTIONS
 """
@@ -106,6 +116,20 @@ def plot_properties_owned(properties_owned_p1, properties_owned_p2, filename):
     plt.ylabel('Properties Owned')
     plt.title('Properties Owned History')
     plt.legend()
+    plt.savefig(filename)
+    plt.close()
+    
+def plot_squares_landed(squares_landed, filename):
+    """
+    Plots the number of times a player landed on each square as a bar graph and saves it to a file.
+    """
+    squares = list(range(len(squares_landed)))
+    
+    plt.figure()
+    plt.bar(squares, squares_landed, color='blue')
+    plt.xlabel('Square')
+    plt.ylabel('Number of Times Landed')
+    plt.title('Number of Times Each Square Was Landed On')
     plt.savefig(filename)
     plt.close()
 
@@ -163,15 +187,18 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
     rent_history_output = ''
     wealth_history_output = ''
     properties_owned_output = ''
+    squares_landed_output = ''
     
     if(auction_type == "English"):
         rent_history_output = 'plots/rent_history_english.png'
         wealth_history_output = 'plots/wealth_history_english.png'
         properties_owned_output = 'plots/properties_owned_english.png'
+        squares_landed_output = 'plots/squares_landed_english.png'
     else:
         rent_history_output = 'plots/rent_history_random.png'
         wealth_history_output = 'plots/wealth_history_random.png'
         properties_owned_output = 'plots/properties_owned_random.png'
+        squares_landed_output = 'plots/squares_landed_random.png'
         
     # Plot rent paid history
     plot_rent_history(rent_history_p1, rent_history_p2, rent_history_output)
@@ -181,6 +208,10 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
     
     # Plot the properties owned history of both players and save it to a file
     plot_properties_owned(properties_owned_p1, properties_owned_p2, properties_owned_output)
+    
+    squares_landed = track_squares_landed(game.board)
+    plot_squares_landed(squares_landed, squares_landed_output)
+
     
     
     # Plot the pass Go history of both players and save it to a file
