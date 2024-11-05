@@ -58,6 +58,6 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
     plt.close(fig)
 
 ## CHANGE THIS FOR DATA COLLECTION!!
-for i in range(20):
+for i in range(20, 30):
     seed = 100 + i
-    main(0, 1, "English", seed)
+    main(0, 1, "Random", seed)
