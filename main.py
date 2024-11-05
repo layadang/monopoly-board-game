@@ -152,15 +152,18 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
 
     loser=game.end_game()
     print('======================')
-    print(f"Total rounds: {game.round}")
     print("FINAL STATS:")
+    print(f"Total rounds: {game.round}")
     game.get_final_stats(auction_type, seed, loser)
 
     plt.ioff()  
-    plt.pause(2)  
-    plt.close(fig)
+    plt.show()
+    # plt.pause(2)  
+    # plt.close(fig)
 
 ## CHANGE THIS FOR DATA COLLECTION!!
-for i in range(20, 30):
-    seed = 100 + i
-    main(0, 1, "Random", seed)
+# for i in range(10):
+#     seed = 100 + i
+#     main(0, 1, "English", seed)
+
+main(0, 0, "Random", 420)
