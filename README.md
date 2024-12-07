@@ -1,5 +1,8 @@
 # CS 506 Final Project: Predicting Monopoly Board Game Outcomes
 
+# 🎦 [Midterm Presentation](https://www.youtube.com/watch?v=U9uCqartxlI)
+# 📝 [Slidedeck](https://docs.google.com/presentation/d/13o0royowmw1D76FW3p66xZmjKX5W7Teozy6wgjHaN7I/edit?usp=sharing)
+
 ## Collaborators 
 * Laya Dang (pd03@bu.edu)
 * Gabi Guillermo (gabe441@bu.edu)
