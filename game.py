@@ -87,8 +87,13 @@ class Game:
                 num_rounds = self.english_auction(current_player, opponent_player, current_square)
                 print(f"Total auction rounds: {num_rounds}")
                 # print(f"Square is now owned: {current_square.is_owned()}")
+
             if self.bidding == "Random":
                 self.random_auction(current_player, opponent_player, current_square)
+
+            if self.bidding == "Vickrey":
+                num_rounds = self.vickrey_auction(current_player, opponent_player, current_square)
+                print(f"Total auction rounds: {num_rounds}")
 
         # PAY RENT?
         elif (current_square.is_owned()):
@@ -206,6 +211,76 @@ class Game:
             other_player.change_wealth(-price)
             property.buy_property(other_player)
             print(f"Player {selected_player} couldn't afford it. Player {other_player} buys {property} for ${price}")
+
+    def vickrey_auction(self, current_player, opponent_player, property):
+        """
+            Function to implement Vickery auctions, where highest bidder wins
+            but pays the second highest price
+        """
+        auction_rounds = 0
+
+        # Player initial valuation:
+        player_valuation = current_player.valutation_function(property)
+        opponent_valuation = opponent_player.valutation_function(property)
+        print(f"Player {current_player} valuation of {property} is {player_valuation}")
+        print(f"Player {opponent_player} valuation of {property} is {opponent_valuation}")
+
+        # Case where both players cannot afford the property
+        if (player_valuation == 0) and (opponent_valuation == 0):
+            return auction_rounds
+
+        # Case where one player cannot bid at all
+        if player_valuation == 0 and opponent_valuation != 0:
+            opponent_player.add_property(property)
+            opponent_player.change_wealth(-opponent_valuation)
+            property.buy_property(opponent_player)
+            print(f"Player {opponent_player} wins the auction for {property} at ${opponent_valuation}")
+            return auction_rounds
+        
+        if opponent_valuation == 0 and player_valuation != 0:
+            current_player.add_property(property)
+            current_player.change_wealth(-player_valuation)
+            property.buy_property(current_player)
+            print(f"Player {current_player} wins the auction for {property} at ${player_valuation}")
+            return auction_rounds
+
+        # BEGIN AUCTION: Starting bid as 80% of min valuation
+        price = min(player_valuation, opponent_valuation) * 0.8  
+
+        current_decision, opponent_decision = True, True         # initial decision: both players willing to pay
+        last_bid = None
+        second_highest_bid = None
+
+        # Run auction until one player is no longer willing to bid
+        while current_decision and opponent_decision:
+            auction_rounds += 1
+            print(f"Auction at price ${price}: Player {current_player} decision = {current_decision}, Player {opponent_player} decision = {opponent_decision}")
+
+            last_bid = price
+            second_highest_bid = price / 1.1  # Previous price becomes second-highest bid
+            price *= 1.1  # Increase price by 10%
+
+            current_decision = current_player.decide_buy(price)
+            opponent_decision = opponent_player.decide_buy(price)
+
+        # Determine winner and apply second-price rule
+        if not current_decision and opponent_decision:
+            # Opponent wins but pays the second-highest bid
+            opponent_player.add_property(property)
+            opponent_player.change_wealth(-second_highest_bid)
+            property.buy_property(opponent_player)
+            print(f"Player {opponent_player} wins the auction for {property} at the second-highest price of ${second_highest_bid}")
+
+        elif current_decision and not opponent_decision:
+            # Current player wins but pays the second-highest bid
+            current_player.add_property(property)
+            current_player.change_wealth(-second_highest_bid)
+            property.buy_property(current_player)
+            print(f"Player {current_player} wins the auction for {property} at the second-highest price of ${second_highest_bid}")
+
+        print("Neither player bought the property.") if not current_decision and not opponent_decision else None
+
+        return auction_rounds
 
     def current_player_wealth(self, i):
         """

@@ -136,7 +136,8 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
     random.seed(seed)
     game = Game([player_1_risk, player_2_risk], auction_type)
     
-    plt.ion()  
+    # plt.ion()  
+    plt.ioff()  
     fig = plt.figure()  
 
     while (game.end_game() is None):
@@ -148,7 +149,7 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
         
         track_player_wealth(game, wealth_history)
         
-        plot_live_wealth(wealth_history, player_1_risk, player_2_risk, auction_type, seed)
+        # plot_live_wealth(wealth_history, player_1_risk, player_2_risk, auction_type, seed)
 
     loser=game.end_game()
     print('======================')
@@ -156,14 +157,56 @@ def main(player_1_risk, player_2_risk, auction_type, seed):
     print(f"Total rounds: {game.round}")
     game.get_final_stats(auction_type, seed, loser)
 
-    plt.ioff()  
-    plt.show()
-    # plt.pause(2)  
-    # plt.close(fig)
+    # plt.show()
+    # plt.pause(1)  
+    plt.close(fig)
 
-## CHANGE THIS FOR DATA COLLECTION!!
-# for i in range(10):
-#     seed = 100 + i
-#     main(0, 1, "English", seed)
+# CHANGE THIS FOR DATA COLLECTION!!
 
-main(0, 0, "Random", 420)
+# def run_all(mode, range_to_run):
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(0, 1, mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(0, -1, mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(1, -1, mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(1, 0, mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(-1, 0,mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(-1, 1,mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(0, 0, mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(1, 1, mode, seed)
+
+#     for i in range(range_to_run[0], range_to_run[1]):
+#         seed = 100 + i
+#         main(-1, -1,mode, seed)
+
+def run_all(mode, range_to_run):
+    combinations = [(0, 1), (0, -1), (0, 0), (1, -1), (1, 0), (1, 1), (-1, 0), (-1, 1), (-1, -1)]
+    for combination in combinations:
+        for i in range(range_to_run[0], range_to_run[1]):
+            seed = 100 + i
+            main(combination[0], combination[1], mode, seed)
+
+run_all("Vickrey", [401, 5000])
+
+# main(0, 1, "Random", 420)
