@@ -221,12 +221,66 @@ def plot_wins_and_risk(data_file):
     plt.show()
 
 
+def plot_distributions(data_file):
+    # Load the data
+    data = pd.read_csv(data_file)
+    
+    # Define paired features
+    paired_features = [
+        'neighborhood_completeness',
+        'passed_go_count',
+        'properties_owned',
+        'total_rent_paid',
+        'wealth'
+    ]
+    
+    # Define single features
+    single_features = [
+        'num_rounds',
+        'winner',
+    ]
+    
+    # Plot distributions for paired features
+    for feature in paired_features:
+        plt.figure(figsize=(10, 6))
+        plt.hist(data[f'P1_{feature}'], bins=20, color='blue', alpha=0.5, label='P1')
+        plt.hist(data[f'P2_{feature}'], bins=20, color='red', alpha=0.5, label='P2')
+        plt.title(f'Distribution of {feature} for P1 and P2')
+        plt.xlabel(feature)
+        plt.ylabel('Frequency')
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(f'results/distribution_{feature}_P1_P2.png')
+        plt.show()
+    
+    # Plot distributions for single features
+    for feature in single_features:
+        plt.figure(figsize=(10, 6))
+        plt.hist(data[feature], bins=20, color='blue', alpha=0.7)
+        plt.title(f'Distribution of {feature}')
+        plt.xlabel(feature)
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.savefig(f'results/distribution_{feature}.png')
+        plt.show()
+    
+    # Plot distribution of overall winners
+    plt.figure(figsize=(10, 6))
+    plt.hist(data['winner'], bins=3, color='green', alpha=0.7)
+    plt.title('Distribution of Overall Winners')
+    plt.xlabel('Winner')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.savefig('results/distribution_overall_winners.png')
+    plt.show()
+
 
 if __name__ == "__main__":
     # visualize_board()
     # group_winners("results/full_data.csv")
-    plot_neighborhood_completeness_vs_win("plots/full_data.csv")
-    plot_wins_and_risk("plots/full_data.csv")
+    # plot_neighborhood_completeness_vs_win("results/full_data.csv")
+    # plot_wins_and_risk("results/full_data.csv")
+    plot_distributions("results/full_data.csv")
     
 
 """
