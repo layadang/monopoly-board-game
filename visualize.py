@@ -51,6 +51,9 @@ def visualize_board(data_file):
     
     
 def group_winners(data_file):
+    """
+    Currently Useless
+    """
     # Load the Monopoly game data
     game_data = pd.read_csv(data_file)
     
@@ -82,6 +85,10 @@ def group_winners(data_file):
     plt.title('Number of Wins by Winner Type')
     plt.show()
     
+    
+    
+    
+    
 def plot_neighborhood_completeness_vs_win(data_file):
     """
     Plots if neighborhood_completeness corresponds to a win.
@@ -89,29 +96,64 @@ def plot_neighborhood_completeness_vs_win(data_file):
     # Load the data
     data = pd.read_csv(data_file)
     
-    # Extract relevant columns
-    p1_neighborhood_completeness = data['P1_neighborhood_completeness']
-    p2_neighborhood_completeness = data['P2_neighborhood_completeness']
-    winner = data['winner']
+    # Filter data by auction type
+    english_data = data[data['is_English'] == 1]
+    vickrey_data = data[data['is_Vickrey'] == 1]
+    random_data = data[data['is_Random'] == 1]
     
-    # Create a scatter plot
-    plt.figure()
+    english_completeness_values = []
+    vickrey_completeness_values = []
+    random_completeness_values = []
     
-    # Plot Player 1 data
-    plt.scatter(p1_neighborhood_completeness[winner == 1], [1] * sum(winner == 1), color='blue', label='Player 1 Win', alpha=0.5)
-    plt.scatter(p1_neighborhood_completeness[winner != 1], [0] * sum(winner != 1), color='red', label='Player 1 Loss', alpha=0.5)
+    for _, row in english_data.iterrows():
+        if row['winner'] == 1:
+            english_completeness_values.append(row['P1_neighborhood_completeness'])
+        elif row['winner'] == 2:
+            english_completeness_values.append(row['P2_neighborhood_completeness'])
+
+    # Append risk values of winners for Vickrey auction
+    for _, row in vickrey_data.iterrows():
+        if row['winner'] == 1:
+            vickrey_completeness_values.append(row['P1_neighborhood_completeness'])
+        elif row['winner'] == 2:
+            vickrey_completeness_values.append(row['P2_neighborhood_completeness'])
+
+    # Append risk values of winners for Random auction
+    for _, row in random_data.iterrows():
+        if row['winner'] == 1:
+            random_completeness_values.append(row['P1_neighborhood_completeness'])
+        elif row['winner'] == 2:
+            random_completeness_values.append(row['P2_neighborhood_completeness'])
     
-    # Plot Player 2 data
-    plt.scatter(p2_neighborhood_completeness[winner == 2], [1] * sum(winner == 2), color='green', label='Player 2 Win', alpha=0.5)
-    plt.scatter(p2_neighborhood_completeness[winner != 2], [0] * sum(winner != 2), color='orange', label='Player 2 Loss', alpha=0.5)
     
+    
+    
+    plt.figure(figsize=(12, 8))
+
+    plt.subplot(3, 1, 1)
+    plt.hist(english_completeness_values, bins=20, color='blue', alpha=0.7)
+    plt.title('Neighborhood Completeness of Winners - English Auction')
     plt.xlabel('Neighborhood Completeness')
-    plt.ylabel('Win (1) / Loss (0)')
-    plt.title('Neighborhood Completeness vs Win')
-    plt.legend()
+    plt.ylabel('Frequency')
+
+    plt.subplot(3, 1, 2)
+    plt.hist(vickrey_completeness_values, bins=20, color='green', alpha=0.7)
+    plt.title('Neighborhood Completeness of Winners - Vickrey Auction')
+    plt.xlabel('Neighborhood Completeness')
+    plt.ylabel('Frequency')
+
+    plt.subplot(3, 1, 3)
+    plt.hist(random_completeness_values, bins=20, color='red', alpha=0.7)
+    plt.title('Neighborhood Completeness of Winners - Random Auction')
+    plt.xlabel('Neighborhood Completeness')
+    plt.ylabel('Frequency')
+
+    plt.tight_layout()
+    plt.savefig("results/neighborhood_completeness_vs_win.png")
+
     plt.show()
-    plt.savefig('plots/neighborhood_completeness_vs_win.png')
-    plt.close()
+    
+    
     
 def plot_neighborhood_completeness_and_risk(data_file):
     """
@@ -174,6 +216,8 @@ def plot_neighborhood_completeness_and_risk(data_file):
     plt.ylabel('Frequency')
 
     plt.tight_layout()
+    plt.savefig("results/neighborhood_completeness_and_risk.png")
+
     plt.show()
 
 
@@ -181,8 +225,8 @@ def plot_neighborhood_completeness_and_risk(data_file):
 if __name__ == "__main__":
     # visualize_board()
     # group_winners("results/full_data.csv")
-    # plot_neighborhood_completeness_vs_win("results/full_data.csv")
-    plot_neighborhood_completeness_and_risk("results/full_data.csv")
+    plot_neighborhood_completeness_vs_win("plots/full_data.csv")
+    plot_neighborhood_completeness_and_risk("plots/full_data.csv")
     
 
 """
