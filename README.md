@@ -1,11 +1,17 @@
 # CS 506 Final Project: Predicting Monopoly Board Game Outcomes
 
-# 🎦 [Midterm Presentation](https://www.youtube.com/watch?v=U9uCqartxlI)
-# 📝 [Slidedeck](https://docs.google.com/presentation/d/13o0royowmw1D76FW3p66xZmjKX5W7Teozy6wgjHaN7I/edit?usp=sharing)
 
 ## Collaborators 
 * Laya Dang (pd03@bu.edu)
 * Gabi Guillermo (gabe441@bu.edu)
+
+## How to build and run
+1. Run `make install` to create virtual environment and install dependencies
+2. In `main.py`, uncomment the last two lines to collect all game simulations data. This will take about an hour. Note this was already done, and results are stored as CSV files in the `results`directory
+   - Running this again will duplicate all data already there
+3. Run all code blocks in `cleaning.ipynb` to get the `results/full_data.csv` file.
+4. Run all code blocks in `model.ipynb` to get the `results/decision_tree_model.pkl` file. This is the final model that predicts Monopoly game outcome at about a **73% accuracy**.
+5. Alternatively, skip steps 2-4 and run `make test` to demonstrate a sample of data collection and running the model with prediction. 
 
 ## Project Description 
 This project aims to model a two-player auction-based monopoly board game to find the best strategy of accumulating the most wealth by the end of the game. In this game scenario, every unbought property immediately goes to auction when a player lands on it. The strategy would be how much a player chooses to bid on the property. We hope to find a consistent winning strategy that takes into consideration player's current wealth, opponent's current wealth, price, rent, number of properties in the same neighborhood already owned, and so on.
@@ -46,10 +52,9 @@ A player's auction strategy will depend on:
 - Price of property in relation to current wealth 
 - Opponent's auction strategy
 
-We will find the best strategy for the four most common auction designs, described as:
+We will find the best strategy for the most common auction designs, described as:
 - **English auctions**: players continue to make higher bids until they are no longer willing to pay higher than the last price
 - **Dutch auctions**: a high price is initially set and decreases until a player is willing to pay the current price
-- **Blind auctions**: players simultaneously bid a price without knowing the opponent's price, and the higher bid wins
 - **Vickery auctions**: the highest price bidder wins, but only has to pay the second-highest price
 - **Random auctions**: randomly select a bidder that is able to buy the base cost
 
@@ -80,25 +85,43 @@ Some errors and edge cases that may occur with our data collection may be:
     - **Fix**: Run a sufficient number of games and plot dice roll outcomes to ensure it is the expected distribution (2d6 Gaussian distribution)
 
 ## Visualizations and Modeling
+We are able to visualize wealth throughout the game for each simulation (see `main.py`), which, after observing a handful of demos, showed us that games tend to go on to 300+ rounds where players compete for the last property, or less than 50 to where a player goes bankrupt. This observation tells us that number of rounds is an important feature. 
 
- We will first visualize where on the board players are landing on the most to determine which neighborhoods are best to buy and incorporate that into the Player's strategy. 
+This is a demo of a random auction run:
+![alt text](./plots/live_demo.gif)
 
-After collecting the data, we will apply machine learning models to identify patterns and predict optimal strategies. Visualizations can include:
- - wealth over time
- - auction outcomes
- - the effect of different bidding strategies on game results
- 
+*More graphs here about final data* 
+
+## Results
+We decided on a decision tree, as it is highly interpretable (we can see which features are most influential) and allows us to understand the decision-making process. Since we do not know which features may not be relevant, the tree's ability to naturally ignore irrelevant features during splitting is advantageous. This ensures that the model focuses only on features that contribute meaningfully to predicting the winner.
+
+Additionally, the decision tree's non-parametric nature makes it ideal for handling non-linear relationships between features, such as interactions between "total rent paid" and "properties owned." This ability is useful given the complexity of game outcomes, where no predefined relationships between features and results are guaranteed.
+
+The final tree has a depth of 10, and these are the top 3:
+
+![alt text](./plots/tree_top_3.png)
+
+Properties owned appears to be the most important feature, followed by risk type, rent paid, and number of times passing Go. This matches with what we expected as a general Monopoly strategy, where you try to get as many properties as possible. 
+
+With the 80:20 train test split, we were able to validate the data. The final accuracy and classification report is:
+
+![alt text](./plots/model_report.png)
+
+This tells us that the model has similar accuracies for both predicting player 1 and player 2 wins (which is only relevant in our model as who goes first).
 
 ## Future Steps
-### Modeling 
-We will explore various algorithms, such as decision trees or reinforcement learning, to predict the best moves based on game states. According to similar previous studies, 
+### More data collection 
+Since final wealth ended up as an overfitted feature (by game rules, player with less wealth loses if all properties are bought), it would have been better to keep track of average wealth, average wealth differences, average wealth growth per round, or a similar metric.
 
+We could also focus on player growth throughout the game instead of the final stats, such as how quickly players accquire properties. 
 
-## Testing
-We will validate the effectiveness of our model by testing it on unseen Monopoly runs. Metrics for success will include winning percentage, average wealth by the end of the game, and the impact of each factor (e.g., property ownership, rent payments, and auction bids) on the game outcome.
+### More game features
+We ignored many aspects of the original Monopoly game that, in reality, will play a major role in determining the winner, such as Jail, Community/Chance cards, and building houses. Adding these features may be easier now that we have built `board.py`, `game.py`, and `player.py`.
 
-## Project Update:
-Originally we thought that player landings (what square the player lands on the board) would be evenly distributed between the total number of tiles on the board. The simulations showed otherwise. Square 25 and 31 were the most landed on squares. 
+## Project Mid-Semester Update
+*Nov 5th Updates:*
+
+Originally, we thought that player landings (what square the player lands on the board) would be evenly distributed between the total number of tiles on the board. The simulations showed otherwise. Square 25 and 31 were the most landed on squares. 
 
 ![alt text](./plots/squares_landed_random.png)
 
@@ -116,9 +139,6 @@ In the english auction, the game ended because every property was bought by the 
 ![alt text](./plots/wealth_history_random.png)
 ![alt text](./plots/properties_owned_random.png)
 
-## Next Steps:
-- Explore results of multiple runs with different player combinations.
-- Implement who-goes-first as a feature.
-- Apple machine learning models on this feature to see if we accurately predict future game results.
-- Build other auction types if time permits.
+- 🎦 [**Presentation**](https://www.youtube.com/watch?v=U9uCqartxlI)
+- 📝 [**Slidedeck**](https://docs.google.com/presentation/d/13o0royowmw1D76FW3p66xZmjKX5W7Teozy6wgjHaN7I/edit?usp=sharing)
 
