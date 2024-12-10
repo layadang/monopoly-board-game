@@ -63,26 +63,17 @@ The Python objects created above will, by design, track the players' actions and
 
 ### Feature Extraction
 The key features to track for each turn of the game include:
-- Current auction design
+- Auction design
 - Players' wealth
-- Players' risk-aversion
+- Players' risk type
 - Number of properties owned
-- Rent paid
-- Auction results (winning bids and price)
-- Final results of who won each game
+- Total ent paid
+- Winner
 - Neighborhood completeness (number of completed neighborhoods)
 - Number of time passing Go
 - Total rounds
-- Reason for game ending (bankruptcy or all properties bought)
 
-We will run these simulations *n* times, for different auction designs and combinationo of player types, until we have sufficient data for analysis.
-
-## Potential Data Inconsistencies 
-Some errors and edge cases that may occur with our data collection may be:
-- A player going bankrupt too early in the game before establishing any bidding strategy
-    - **Fix**: In the data cleaning stage, accept a valid  game only if each player gets over 20 turns (change this depending on how much sufficient data we have)
-- Random outcomes of dice rolls putting too much noise in the data, a.k.a. sometimes players are just "lucky"
-    - **Fix**: Run a sufficient number of games and plot dice roll outcomes to ensure it is the expected distribution (2d6 Gaussian distribution)
+We ran 2,500 different simulations per auction designs and combinations of player types, for a total of 67,500 data points.
 
 ## Visualizations and Modeling
 We are able to visualize wealth throughout the game for each simulation (see `main.py`), which, after observing a handful of demos, showed us that games tend to go on to 300+ rounds where players compete for the last property, or less than 50 to where a player goes bankrupt. This observation tells us that number of rounds is an important feature. 
