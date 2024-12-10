@@ -149,7 +149,7 @@ def plot_neighborhood_completeness_vs_win(data_file):
     plt.ylabel('Frequency')
 
     plt.tight_layout()
-    plt.savefig("results/neighborhood_completeness_vs_win.png")
+    plt.savefig("plots/neighborhood_completeness_vs_win.png")
 
     plt.show()
     
@@ -216,7 +216,7 @@ def plot_wins_and_risk(data_file):
     plt.ylabel('Frequency')
 
     plt.tight_layout()
-    plt.savefig("results/neighborhood_completeness_and_risk.png")
+    plt.savefig("plots/neighborhood_completeness_and_risk.png")
 
     plt.show()
 
@@ -271,15 +271,15 @@ def plot_distributions(data_file):
     plt.xlabel('Winner')
     plt.ylabel('Frequency')
     plt.grid(True)
-    plt.savefig('results/distribution_overall_winners.png')
+    plt.savefig('plots/distribution_overall_winners.png')
     plt.show()
 
 
 if __name__ == "__main__":
     # visualize_board()
     # group_winners("results/full_data.csv")
-    # plot_neighborhood_completeness_vs_win("results/full_data.csv")
-    # plot_wins_and_risk("results/full_data.csv")
+    plot_neighborhood_completeness_vs_win("results/full_data.csv")
+    plot_wins_and_risk("results/full_data.csv")
     plot_distributions("results/full_data.csv")
     
 

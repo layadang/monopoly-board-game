@@ -76,12 +76,21 @@ The key features to track for each turn of the game include:
 We ran 2,500 different simulations per auction designs and combinations of player types, for a total of 67,500 data points.
 
 ## Visualizations and Modeling
-We are able to visualize wealth throughout the game for each simulation (see `main.py`), which, after observing a handful of demos, showed us that games tend to go on to 300+ rounds where players compete for the last property, or less than 50 to where a player goes bankrupt. This observation tells us that number of rounds is an important feature. 
+We are able to visualize wealth throughout the game for each simulation (see `main.py`), which, after observing a handful of demos, showed us that games tend to go on to 300+ rounds where players compete for the last property, or less than 50 to where a player goes bankrupt. This observation tells us that number of rounds is an important feature.
+
+The differences in number of rounds can be seen here:
+![alt text](./plots/distribution_num_rounds.png)
+
+Interestingly, many of the distributions of the features are similar between each player, signifying that which player goes first is not a significant factor in determining the winner. This can be seen between the distribution on wins between each player:
+![alt text](./plots/distribution_winner.png)
+
 
 This is a demo of a random auction run:
 ![alt text](./plots/live_demo.gif)
 
-*More graphs here about final data* 
+
+With the high amount of simulations and data, we also noticed that the neighborhood completeness between each auction type did not vary much. This was also an important factor in deciding what to train out model on as it was not a feature that was significant in determining the winner.
+![alt text](./plots/neighborhood_completeness_vs_win.png.png)
 
 ## Results
 We decided on a decision tree, as it is highly interpretable (we can see which features are most influential) and allows us to understand the decision-making process. Since we do not know which features may not be relevant, the tree's ability to naturally ignore irrelevant features during splitting is advantageous. This ensures that the model focuses only on features that contribute meaningfully to predicting the winner.
@@ -92,7 +101,7 @@ The final tree has a depth of 10, and these are the top 3:
 
 ![alt text](./plots/tree_top_3.png)
 
-Properties owned appears to be the most important feature, followed by risk type, rent paid, and number of times passing Go. This matches with what we expected as a general Monopoly strategy, where you try to get as many properties as possible. 
+Properties owned appears to be the most important feature, followed by risk type, rent paid, and number of times passing Go. This matches with what we expected as a general Monopoly strategy, where you try to get as many properties as possible.
 
 With the 80:20 train test split, we were able to validate the data. The final accuracy and classification report is:
 
