@@ -79,13 +79,16 @@ We ran 2,500 different simulations per auction designs and combinations of playe
 We are able to visualize wealth throughout the game for each simulation (see `main.py`), which, after observing a handful of demos, showed us that games tend to go on to 300+ rounds where players compete for the last property, or less than 50 to where a player goes bankrupt. This observation tells us that number of rounds is an important feature.
 
 The differences in number of rounds can be seen here:
+
 ![alt text](./plots/distribution_num_rounds.png)
 
 Interestingly, many of the distributions of the features are similar between each player, signifying that which player goes first is not a significant factor in determining the winner. This can be seen between the distribution on wins between each player:
+
 ![alt text](./plots/distribution_winner.png)
 
 
 This is a demo of a random auction run:
+
 ![alt text](./plots/live_demo.gif)
 
 
