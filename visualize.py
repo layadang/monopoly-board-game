@@ -155,7 +155,7 @@ def plot_neighborhood_completeness_vs_win(data_file):
     
     
     
-def plot_neighborhood_completeness_and_risk(data_file):
+def plot_wins_and_risk(data_file):
     """
     Plots the neighborhood completeness and risk value grouped by winners as a bar graph.
     Creates subplots for English auction, Vickrey auction, and Random auction.
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     # visualize_board()
     # group_winners("results/full_data.csv")
     plot_neighborhood_completeness_vs_win("plots/full_data.csv")
-    plot_neighborhood_completeness_and_risk("plots/full_data.csv")
+    plot_wins_and_risk("plots/full_data.csv")
     
 
 """
