@@ -93,7 +93,7 @@ This is a demo of a random auction run:
 
 
 With the high amount of simulations and data, we also noticed that the neighborhood completeness between each auction type did not vary much. This was also an important factor in deciding what to train out model on as it was not a feature that was significant in determining the winner.
-![alt text](./plots/neighborhood_completeness_vs_win.png.png)
+![alt text](./plots/neighborhood_completeness_vs_win.png)
 
 ## Results
 We decided on a decision tree, as it is highly interpretable (we can see which features are most influential) and allows us to understand the decision-making process. Since we do not know which features may not be relevant, the tree's ability to naturally ignore irrelevant features during splitting is advantageous. This ensures that the model focuses only on features that contribute meaningfully to predicting the winner.
